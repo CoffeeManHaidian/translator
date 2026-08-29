@@ -1,0 +1,19 @@
+<RCC>
+  <qresource prefix="mainwindow">
+    <file>icons/arrow-right-left.svg</file>
+    <file>icons/check.svg</file>
+    <file>icons/copy.svg</file>
+    <file>icons/rotate-ccw-clock.svg</file>
+    <file>icons/settings.svg</file>
+    <file>icons/x.svg</file>
+  </qresource>
+  <qresource prefix="providers">
+    <file>icons/deepseek.svg</file>
+    <file>icons/openai.svg</file>
+  </qresource>
+  <qresource prefix="settings">
+    <file>icons/chevron-down.svg</file>
+    <file>icons/eye.svg</file>
+    <file>icons/eye-off.svg</file>
+  </qresource>
+</RCC>

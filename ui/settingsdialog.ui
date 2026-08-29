@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>settings_Dialog</class>
+ <widget class="QDialog" name="settings_Dialog">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>460</width><height>390</height></rect>
+  </property>
+  <property name="minimumSize">
+   <size><width>440</width><height>0</height></size>
+  </property>
+  <property name="windowTitle"><string>Dialog</string></property>
+  <property name="styleSheet">
+   <string notr="true">QDialog#settings_Dialog {
+    background-color: #F8FAFC;
+    color: #0F172A;
+}
+
+QLabel#title_label {
+    color: #0F172A;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+QLabel#description_label,
+QLabel#api_key_hint_label {
+    color: #64748B;
+    font-size: 12px;
+}
+
+QLabel#provider_label,
+QLabel#model_label,
+QLabel#api_key_label,
+QLabel#base_url_label,
+QLabel#hotkey_label {
+    color: #334155;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+QWidget#form_widget,
+QWidget#advanced_widget {
+    background-color: transparent;
+    border: none;
+}
+
+QLineEdit#api_key_lineEdit,
+QLineEdit#base_url_lineEdit,
+QComboBox#provider_comboBox,
+QComboBox#model_comboBox,
+QKeySequenceEdit#hotkey_keySequenceEdit {
+    min-height: 26px;
+    max-height: 26px;
+    padding: 0 10px;
+    background-color: #FFFFFF;
+    color: #0F172A;
+    border: 1px solid #CBD5E1;
+    border-radius: 7px;
+}
+
+QComboBox#provider_comboBox,
+QComboBox#model_comboBox {
+    padding: 0 28px 0 9px;
+}
+
+QLineEdit#api_key_lineEdit:hover,
+QLineEdit#base_url_lineEdit:hover,
+QComboBox#provider_comboBox:hover,
+QComboBox#model_comboBox:hover,
+QKeySequenceEdit#hotkey_keySequenceEdit:hover {
+    border-color: #94A3B8;
+}
+
+QLineEdit#api_key_lineEdit:focus,
+QLineEdit#base_url_lineEdit:focus,
+QComboBox#provider_comboBox:focus,
+QComboBox#model_comboBox:focus,
+QKeySequenceEdit#hotkey_keySequenceEdit:focus {
+    border-color: #2563EB;
+}
+
+QComboBox#provider_comboBox::drop-down,
+QComboBox#model_comboBox::drop-down {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 26px;
+    background-color: transparent;
+    border: none;
+}
+
+QComboBox#provider_comboBox::down-arrow,
+QComboBox#model_comboBox::down-arrow {
+    image: url(:/settings/icons/chevron-down.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox#provider_comboBox QAbstractItemView,
+QComboBox#model_comboBox QAbstractItemView {
+    padding: 4px;
+    color: #0F172A;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    outline: none;
+    selection-color: #1E3A8A;
+    selection-background-color: #EFF6FF;
+}
+
+QComboBox#provider_comboBox QAbstractItemView::item,
+QComboBox#model_comboBox QAbstractItemView::item {
+    min-height: 26px;
+    padding: 0 8px;
+}
+
+QPushButton#visibility_pushButton,
+QPushButton#refresh_models_pushButton {
+    min-width: 28px;
+    max-width: 28px;
+    min-height: 28px;
+    max-height: 28px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 6px;
+}
+
+QPushButton#visibility_pushButton:hover,
+QPushButton#refresh_models_pushButton:hover {
+    background-color: #EAF0F7;
+}
+
+QPushButton#visibility_pushButton:pressed,
+QPushButton#refresh_models_pushButton:pressed {
+    background-color: #E2E8F0;
+}
+
+QPushButton#advanced_toggleButton {
+    min-height: 24px;
+    max-height: 24px;
+    padding: 0;
+    color: #64748B;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+}
+
+QPushButton#advanced_toggleButton:hover,
+QPushButton#advanced_toggleButton:checked {
+    color: #2563EB;
+}
+
+QPushButton#test_pushButton,
+QPushButton#cancel_pushButton {
+    min-height: 26px;
+    max-height: 26px;
+    padding: 0 10px;
+    color: #334155;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 7px;
+}
+
+QPushButton#test_pushButton:hover,
+QPushButton#cancel_pushButton:hover {
+    background-color: #F8FAFC;
+    border-color: #94A3B8;
+}
+
+QPushButton#test_pushButton:pressed,
+QPushButton#cancel_pushButton:pressed {
+    background-color: #F1F5F9;
+}
+
+QPushButton#save_pushButton {
+    min-height: 26px;
+    max-height: 26px;
+    padding: 0 14px;
+    color: #FFFFFF;
+    background-color: #2563EB;
+    border: 1px solid #2563EB;
+    border-radius: 7px;
+}
+
+QPushButton#save_pushButton:hover {
+    background-color: #1D4ED8;
+    border-color: #1D4ED8;
+}
+
+QPushButton#save_pushButton:pressed {
+    background-color: #1E40AF;
+    border-color: #1E40AF;
+}
+
+QPushButton#save_pushButton:focus,
+QPushButton#cancel_pushButton:focus,
+QPushButton#test_pushButton:focus,
+QPushButton#refresh_models_pushButton:focus,
+QPushButton#visibility_pushButton:focus {
+    border: 1px solid #2563EB;
+}
+
+QPushButton#save_pushButton:disabled,
+QPushButton#cancel_pushButton:disabled,
+QPushButton#test_pushButton:disabled,
+QPushButton#refresh_models_pushButton:disabled {
+    color: #94A3B8;
+    background-color: #F1F5F9;
+    border-color: #E2E8F0;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing"><number>8</number></property>
+   <property name="leftMargin"><number>20</number></property>
+   <property name="topMargin"><number>16</number></property>
+   <property name="rightMargin"><number>20</number></property>
+   <property name="bottomMargin"><number>14</number></property>
+   <item><widget class="QLabel" name="title_label"><property name="text"><string>设置</string></property></widget></item>
+   <item><widget class="QLabel" name="description_label"><property name="text"><string>配置翻译服务与全局快捷键</string></property></widget></item>
+   <item>
+    <widget class="QWidget" name="form_widget" native="true">
+     <layout class="QVBoxLayout" name="form_layout">
+      <property name="spacing"><number>12</number></property>
+      <property name="leftMargin"><number>0</number></property>
+      <property name="topMargin"><number>6</number></property>
+      <property name="rightMargin"><number>0</number></property>
+      <property name="bottomMargin"><number>0</number></property>
+      <item>
+       <layout class="QVBoxLayout" name="provider_field_layout">
+        <property name="spacing"><number>4</number></property>
+        <item><widget class="QLabel" name="provider_label"><property name="text"><string>服务商</string></property></widget></item>
+        <item>
+         <widget class="QComboBox" name="provider_comboBox">
+          <property name="iconSize"><size><width>16</width><height>16</height></size></property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="model_field_layout">
+        <property name="spacing"><number>4</number></property>
+        <item><widget class="QLabel" name="model_label"><property name="text"><string>模型</string></property></widget></item>
+        <item>
+         <layout class="QHBoxLayout" name="model_control_layout">
+          <property name="spacing"><number>6</number></property>
+          <item><widget class="QComboBox" name="model_comboBox"/></item>
+          <item>
+           <widget class="QPushButton" name="refresh_models_pushButton">
+            <property name="toolTip"><string>刷新模型列表</string></property>
+            <property name="accessibleName"><string>刷新模型列表</string></property>
+            <property name="text"><string/></property>
+            <property name="icon"><iconset resource="../resource.qrc"><normaloff>:/mainwindow/icons/rotate-ccw-clock.svg</normaloff>:/mainwindow/icons/rotate-ccw-clock.svg</iconset></property>
+            <property name="iconSize"><size><width>16</width><height>16</height></size></property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="api_key_field_layout">
+        <property name="spacing"><number>4</number></property>
+        <item><widget class="QLabel" name="api_key_label"><property name="text"><string>API Key</string></property></widget></item>
+        <item>
+         <layout class="QHBoxLayout" name="api_key_control_layout">
+          <property name="spacing"><number>6</number></property>
+          <item>
+           <widget class="QLineEdit" name="api_key_lineEdit">
+            <property name="accessibleName"><string>API Key</string></property>
+            <property name="echoMode"><enum>QLineEdit::EchoMode::Password</enum></property>
+            <property name="placeholderText"><string>请输入 API Key</string></property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="visibility_pushButton">
+            <property name="toolTip"><string>显示 API Key</string></property>
+            <property name="accessibleName"><string>显示 API Key</string></property>
+            <property name="text"><string/></property>
+            <property name="icon"><iconset resource="../resource.qrc"><normaloff>:/settings/icons/eye.svg</normaloff>:/settings/icons/eye.svg</iconset></property>
+            <property name="iconSize"><size><width>16</width><height>16</height></size></property>
+            <property name="checkable"><bool>true</bool></property>
+           </widget>
+          </item>
+          <item><widget class="QPushButton" name="test_pushButton"><property name="text"><string>测试连接</string></property></widget></item>
+          <item>
+           <widget class="QLabel" name="status_label">
+            <property name="sizePolicy"><sizepolicy hsizetype="Preferred" vsizetype="Preferred"><horstretch>0</horstretch><verstretch>0</verstretch></sizepolicy></property>
+            <property name="text"><string/></property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item><widget class="QLabel" name="api_key_hint_label"><property name="text"><string>密钥仅保存在当前设备</string></property></widget></item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="hotkey_field_layout">
+        <property name="spacing"><number>4</number></property>
+        <item><widget class="QLabel" name="hotkey_label"><property name="text"><string>全局快捷键</string></property></widget></item>
+        <item>
+         <widget class="QKeySequenceEdit" name="hotkey_keySequenceEdit">
+          <property name="maximumSequenceLength"><number>1</number></property>
+          <property name="clearButtonEnabled"><bool>true</bool></property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="advanced_toggleButton">
+        <property name="toolTip"><string>展开高级设置</string></property>
+        <property name="accessibleName"><string>展开高级设置</string></property>
+        <property name="text"><string>高级设置</string></property>
+        <property name="icon"><iconset resource="../resource.qrc"><normaloff>:/settings/icons/chevron-down.svg</normaloff>:/settings/icons/chevron-down.svg</iconset></property>
+        <property name="iconSize"><size><width>14</width><height>14</height></size></property>
+        <property name="checkable"><bool>true</bool></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="advanced_widget" native="true">
+        <layout class="QVBoxLayout" name="advanced_layout">
+         <property name="spacing"><number>4</number></property>
+         <property name="leftMargin"><number>0</number></property>
+         <property name="topMargin"><number>0</number></property>
+         <property name="rightMargin"><number>0</number></property>
+         <property name="bottomMargin"><number>0</number></property>
+         <item><widget class="QLabel" name="base_url_label"><property name="text"><string>API 地址</string></property></widget></item>
+         <item><widget class="QLineEdit" name="base_url_lineEdit"/></item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation"><enum>Qt::Orientation::Vertical</enum></property>
+     <property name="sizeHint" stdset="0"><size><width>20</width><height>4</height></size></property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+     <property name="spacing"><number>8</number></property>
+     <property name="topMargin"><number>4</number></property>
+     <item><spacer name="horizontalSpacer"><property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+     <item><widget class="QPushButton" name="save_pushButton"><property name="text"><string>保存</string></property></widget></item>
+     <item><widget class="QPushButton" name="cancel_pushButton"><property name="text"><string>取消</string></property></widget></item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources><include location="../resource.qrc"/></resources>
+ <connections/>
+</ui>
