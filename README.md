@@ -2,6 +2,8 @@
 
 Trade Translator 是一个使用 Python 和 PySide6 构建的桌面翻译工具 MVP，支持自动翻译、流式输出、自定义 OpenAI 兼容模型，以及 Windows/macOS 跨应用快捷键取词。
 
+当前 MVP 版本：`0.1.0`
+
 ## 当前 MVP
 
 - 输入停止约 800 毫秒后自动翻译。
@@ -16,7 +18,7 @@ Trade Translator 是一个使用 Python 和 PySide6 构建的桌面翻译工具 
 
 - Python 3.10 或更高版本
 - PySide6 6.10.1
-- Windows 10/11，或 macOS 15（Intel / Apple Silicon）
+- Windows 10/11，或 macOS 13 及以上（Intel / Apple Silicon）
 
 ## 本地运行
 
@@ -45,14 +47,29 @@ macOS 第一次使用快捷键取词时，需要在“系统设置 → 隐私与
 
 模型配置通过 Qt 设置系统保存。API Key 使用系统 Keyring：Windows 对应凭据管理器，macOS 对应钥匙串。`.env`、证书、构建产物和本机 IDE 配置均已排除在 Git 仓库之外。
 
-## 兼容性测试
+## 打包
 
-GitHub Actions 会在以下环境运行完整测试：
+PyInstaller 不是交叉编译器，因此 Windows 安装包必须在 Windows 构建，macOS `.app` 必须在 Mac 构建。
 
-- macOS 15 / Apple Silicon
-- macOS 15 / Intel
+先安装打包依赖：
 
-CI 还会直接加载 ApplicationServices 和 CoreFoundation，以检查 Quartz 原生接口是否可用。系统级权限交互和真实跨应用取词仍需在实体 Mac 上完成最终验收。
+```bash
+python -m pip install -r requirements-build.txt
+```
+
+然后执行统一构建脚本：
+
+```bash
+python tools/build_app.py
+```
+
+脚本会依次生成平台图标、构建应用、运行打包后冒烟测试，并将发布压缩包写入 `release/`：
+
+- Windows：`TradeTranslator-0.1.0-windows-x86_64.zip`
+- Apple Silicon：`TradeTranslator-0.1.0-macos-arm64.zip`
+- Intel Mac：`TradeTranslator-0.1.0-macos-x86_64.zip`
+
+当前发布包没有代码签名。Windows 可能显示 SmartScreen 提示；macOS 给其他设备分发时，需要后续加入 Apple Developer ID 签名和公证。
 
 ## 项目结构
 

@@ -1,8 +1,21 @@
 import sys
 from collections.abc import Callable
+from pathlib import Path
 
+
+if __package__ in {None, ""} and not getattr(sys, "frozen", False):
+    project_root = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(project_root))
+
+from PySide6.QtCore import QTimer
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
+try:
+    from app.version import __version__
+except ModuleNotFoundError:
+    # 兼容 `python app/main.py` 的直接启动方式。
+    from version import __version__
 from platforms.global_hotkey import GlobalHotkey
 from platforms.models import (
     Hotkey,
@@ -94,11 +107,22 @@ def configure_global_hotkey(
     return global_hotkey
 
 
-def main() -> int:
-    app = QApplication([])
+def main(argv: list[str] | None = None) -> int:
+    application_args = list(sys.argv if argv is None else argv)
+    smoke_test = "--smoke-test" in application_args
+    application_args = [
+        argument
+        for argument in application_args
+        if argument != "--smoke-test"
+    ]
+
+    app = QApplication(application_args)
     app.setOrganizationName("TradeTranslator")
     app.setOrganizationDomain("trade-translator.app")
     app.setApplicationName("Trade Translator")
+    app.setApplicationDisplayName("Trade Translator")
+    app.setApplicationVersion(__version__)
+    app.setWindowIcon(QIcon(":/app/icons/app.svg"))
 
     settings_store = SettingsStore()
 
@@ -119,10 +143,13 @@ def main() -> int:
         )
     )
 
-    # 由窗口父子关系和 aboutToQuit 信号共同保证退出时释放快捷键。
-    global_hotkey = configure_global_hotkey(window, settings_store)
+    # 冒烟测试只验证打包后的应用可以创建窗口并正常退出。
+    if not smoke_test:
+        configure_global_hotkey(window, settings_store)
 
     window.show()
+    if smoke_test:
+        QTimer.singleShot(500, app.quit)
     return app.exec()
 
 

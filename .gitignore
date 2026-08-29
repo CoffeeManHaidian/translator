@@ -17,8 +17,10 @@ env/
 # Packaging and build outputs
 build/
 dist/
+release/
 *.egg-info/
 *.spec
+!packaging/*.spec
 
 # Qt Creator and generated local state
 *.user
