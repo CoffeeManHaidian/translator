@@ -91,6 +91,11 @@ class MacOSQuartzApi:
             ctypes.c_bool,
         ]
         quartz.CGEventCreateKeyboardEvent.restype = ctypes.c_void_p
+        quartz.CGEventSetFlags.argtypes = [
+            ctypes.c_void_p,
+            ctypes.c_uint64,
+        ]
+        quartz.CGEventSetFlags.restype = None
         quartz.CGEventPost.argtypes = [
             ctypes.c_uint32,
             ctypes.c_void_p,
@@ -228,3 +233,6 @@ class MacOSQuartzApi:
 
     def post_event(self, event: int) -> None:
         self._quartz.CGEventPost(K_CG_HID_EVENT_TAP, event)
+
+    def set_event_flags(self, event: int, flags: int) -> None:
+        self._quartz.CGEventSetFlags(event, flags)

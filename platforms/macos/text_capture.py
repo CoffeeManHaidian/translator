@@ -14,8 +14,9 @@ class MacOSClipboardTextCapture(TextCapture):
         self,
         clipboard: QClipboard | None = None,
         input_sender: MacOSCopyKeySender | None = None,
-        timeout_ms: int = 1_000,
+        timeout_ms: int = 1_500,
         copy_delay_ms: int = 120,
+        poll_interval_ms: int = 40,
         parent: QObject | None = None,
     ) -> None:
         super().__init__(parent)
@@ -23,6 +24,7 @@ class MacOSClipboardTextCapture(TextCapture):
         self._input_sender = input_sender or MacOSCopyKeySender()
         self._timeout_ms = timeout_ms
         self._copy_delay_ms = copy_delay_ms
+        self._poll_interval_ms = poll_interval_ms
         self._capturing = False
         self._marker = ""
         self._original_mime_data: QMimeData | None = None
@@ -34,6 +36,11 @@ class MacOSClipboardTextCapture(TextCapture):
         self._timeout_timer = QTimer(self)
         self._timeout_timer.setSingleShot(True)
         self._timeout_timer.timeout.connect(self._on_timeout)
+
+        # macOS 后台应用不一定收到其他应用触发的 dataChanged 信号。
+        self._poll_timer = QTimer(self)
+        self._poll_timer.setInterval(self._poll_interval_ms)
+        self._poll_timer.timeout.connect(self._check_clipboard)
         self._clipboard.dataChanged.connect(
             self._on_clipboard_changed
         )
@@ -58,6 +65,7 @@ class MacOSClipboardTextCapture(TextCapture):
         if not self._capturing:
             return
         if self._input_sender.send_copy_shortcut():
+            self._poll_timer.start()
             return
         self._finish_with_error(
             "无法模拟复制，请在系统设置 > 隐私与安全性 > "
@@ -65,6 +73,9 @@ class MacOSClipboardTextCapture(TextCapture):
         )
 
     def _on_clipboard_changed(self) -> None:
+        self._check_clipboard()
+
+    def _check_clipboard(self) -> None:
         if not self._capturing:
             return
         captured_text = self._clipboard.text().strip()
@@ -96,6 +107,7 @@ class MacOSClipboardTextCapture(TextCapture):
     def _stop_timers(self) -> None:
         self._copy_delay_timer.stop()
         self._timeout_timer.stop()
+        self._poll_timer.stop()
 
     def _restore_clipboard(self) -> None:
         original = self._original_mime_data
