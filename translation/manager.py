@@ -13,6 +13,11 @@ class TranslationManager(QObject):
     translation_completed = Signal(str)
     translation_failed = Signal(str)
     translation_cancelled = Signal()
+    request_created = Signal(object)
+    translation_progress = Signal(str, str)
+    translation_succeeded = Signal(object, str)
+    translation_error = Signal(str, str)
+    translation_stopped = Signal(str)
 
     def __init__(self, provider: TranslationProvider, parent: object | None = None):
         super().__init__(parent)
@@ -20,6 +25,7 @@ class TranslationManager(QObject):
         # 初始化翻译提供者和当前请求ID
         self._provider = provider
         self._current_request_id: str | None = None
+        self._current_request: TranslationRequest | None = None
         self._translation_text = ""
 
         self._connect_provider(self._provider)
@@ -84,6 +90,8 @@ class TranslationManager(QObject):
             source_language=source_language,
             target_language=target_language
         )
+        self._current_request = request
+        self.request_created.emit(request)
 
         self._provider.translate(request)
 
@@ -108,25 +116,34 @@ class TranslationManager(QObject):
 
         self._translation_text += chunk
         self.translation_updated.emit(self._translation_text)
+        self.translation_progress.emit(
+            request_id,
+            self._translation_text,
+        )
 
     def _on_completed(self, request_id: str) -> None:
         if request_id != self._current_request_id:
             return
 
         translation_text = self._translation_text
+        request = self._current_request
         # 清除当前请求 ID
         self._clear_current_request()
         # 发射完成信号
         self.translation_completed.emit(translation_text)
+        if request is not None:
+            self.translation_succeeded.emit(request, translation_text)
 
     def _on_failed(self, request_id: str, error: object) -> None:
         if request_id != self._current_request_id:
             return
 
+        message = str(error)
         # 清除当前请求 ID
         self._clear_current_request()
         # 发射失败信号
-        self.translation_failed.emit(str(error))
+        self.translation_failed.emit(message)
+        self.translation_error.emit(request_id, message)
 
     def _on_cancelled(self, request_id: str) -> None:
         if request_id != self._current_request_id:
@@ -136,8 +153,10 @@ class TranslationManager(QObject):
         self._clear_current_request()
         # 发射取消信号
         self.translation_cancelled.emit()
+        self.translation_stopped.emit(request_id)
 
     def _clear_current_request(self) -> None:
         """清除当前请求 ID"""
         self._current_request_id = None
+        self._current_request = None
         self._translation_text = ""

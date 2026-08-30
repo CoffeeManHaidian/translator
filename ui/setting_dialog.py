@@ -57,6 +57,9 @@ class SettingsDialog(QDialog):
         self.ui.model_comboBox.setAccessibleName("模型")
         self.ui.base_url_lineEdit.setAccessibleName("API 地址")
         self.ui.hotkey_keySequenceEdit.setAccessibleName("全局快捷键")
+        self.ui.hotkey_keySequenceEdit.setToolTip(
+            "点击后按下快捷键组合，至少包含 Ctrl、Alt 或 Command/Win"
+        )
         self.ui.provider_label.setBuddy(self.ui.provider_comboBox)
         self.ui.model_label.setBuddy(self.ui.model_comboBox)
         self.ui.api_key_label.setBuddy(self.ui.api_key_lineEdit)

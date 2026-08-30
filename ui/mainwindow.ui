@@ -28,7 +28,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,2">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,1,0">
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0,1,0,0">
       <item>
        <widget class="QComboBox" name="origin_comboBox">
         <item>
@@ -88,6 +88,53 @@
           <string>英语</string>
          </property>
         </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="history_pushButton">
+        <property name="toolTip">
+         <string>翻译历史</string>
+        </property>
+        <property name="accessibleName">
+         <string>打开翻译历史</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton#history_pushButton {
+    min-width: 36px;
+    max-width: 36px;
+    min-height: 36px;
+    max-height: 36px;
+
+    background-color: transparent;
+    border: none;
+    border-radius: 8px;
+}
+
+QPushButton#history_pushButton:hover {
+    background-color: #F1F5F9;
+}
+
+QPushButton#history_pushButton:pressed {
+    background-color: #E2E8F0;
+}
+
+QPushButton#history_pushButton:focus {
+    border: 1px solid #2563EB;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../resource.qrc">
+          <normaloff>:/mainwindow/icons/rotate-ccw-clock.svg</normaloff>:/mainwindow/icons/rotate-ccw-clock.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
        </widget>
       </item>
       <item>

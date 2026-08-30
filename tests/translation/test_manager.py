@@ -48,6 +48,29 @@ def test_manager_accumulates_streamed_translation() -> None:
     assert completed_texts == ["你好"]
 
 
+def test_manager_emits_request_aware_translation_events() -> None:
+    provider = StubTranslationProvider()
+    manager = TranslationManager(provider)
+    created_requests: list[TranslationRequest] = []
+    progress: list[tuple[str, str]] = []
+    succeeded: list[tuple[TranslationRequest, str]] = []
+    manager.request_created.connect(created_requests.append)
+    manager.translation_progress.connect(
+        lambda request_id, text: progress.append((request_id, text))
+    )
+    manager.translation_succeeded.connect(
+        lambda request, text: succeeded.append((request, text))
+    )
+
+    request_id = manager.translate("Hello", "zh-CN")
+    provider.chunk_received.emit(request_id, "你好")
+    provider.completed.emit(request_id)
+
+    assert created_requests[0].request_id == request_id
+    assert progress == [(request_id, "你好")]
+    assert succeeded == [(created_requests[0], "你好")]
+
+
 def test_manager_rejects_empty_text() -> None:
     provider = StubTranslationProvider()
     manager = TranslationManager(provider)

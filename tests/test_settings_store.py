@@ -166,3 +166,28 @@ def test_empty_settings_use_macos_default_hotkey(monkeypatch) -> None:
     store = SettingsStore(settings=FakeSettings())
 
     assert store.load_hotkey() == DEFAULT_MACOS_HOTKEY
+
+
+def test_default_target_language_is_saved_and_loaded() -> None:
+    store = SettingsStore(settings=FakeSettings())
+
+    store.save_default_target_language("en")
+
+    assert store.load_default_target_language() == "en"
+
+
+def test_invalid_default_target_language_falls_back_to_chinese() -> None:
+    settings = FakeSettings()
+    settings.setValue("translation/default_target_language", "fr")
+
+    assert (
+        SettingsStore(settings=settings).load_default_target_language()
+        == "zh-CN"
+    )
+
+
+def test_unsupported_default_target_language_is_rejected() -> None:
+    store = SettingsStore(settings=FakeSettings())
+
+    with pytest.raises(ValueError, match="不支持的目标语言"):
+        store.save_default_target_language("fr")

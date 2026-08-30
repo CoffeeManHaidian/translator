@@ -46,8 +46,7 @@ QWidget#advanced_widget {
 QLineEdit#api_key_lineEdit,
 QLineEdit#base_url_lineEdit,
 QComboBox#provider_comboBox,
-QComboBox#model_comboBox,
-QKeySequenceEdit#hotkey_keySequenceEdit {
+QComboBox#model_comboBox {
     min-height: 26px;
     max-height: 26px;
     padding: 0 10px;
@@ -62,11 +61,46 @@ QComboBox#model_comboBox {
     padding: 0 28px 0 9px;
 }
 
+QKeySequenceEdit#hotkey_keySequenceEdit {
+    min-height: 28px;
+    max-height: 28px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
+
+QKeySequenceEdit#hotkey_keySequenceEdit QLineEdit {
+    min-height: 26px;
+    max-height: 26px;
+    padding: 0 32px 0 10px;
+    color: #0F172A;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 7px;
+    selection-color: #1E3A8A;
+    selection-background-color: #DBEAFE;
+}
+
+QKeySequenceEdit#hotkey_keySequenceEdit QToolButton {
+    min-width: 24px;
+    max-width: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+}
+
+QKeySequenceEdit#hotkey_keySequenceEdit QToolButton:hover {
+    background-color: #EAF0F7;
+}
+
 QLineEdit#api_key_lineEdit:hover,
 QLineEdit#base_url_lineEdit:hover,
 QComboBox#provider_comboBox:hover,
 QComboBox#model_comboBox:hover,
-QKeySequenceEdit#hotkey_keySequenceEdit:hover {
+QKeySequenceEdit#hotkey_keySequenceEdit QLineEdit:hover {
     border-color: #94A3B8;
 }
 
@@ -74,8 +108,14 @@ QLineEdit#api_key_lineEdit:focus,
 QLineEdit#base_url_lineEdit:focus,
 QComboBox#provider_comboBox:focus,
 QComboBox#model_comboBox:focus,
-QKeySequenceEdit#hotkey_keySequenceEdit:focus {
+QKeySequenceEdit#hotkey_keySequenceEdit QLineEdit:focus {
     border-color: #2563EB;
+}
+
+QKeySequenceEdit#hotkey_keySequenceEdit:disabled QLineEdit {
+    color: #94A3B8;
+    background-color: #F1F5F9;
+    border-color: #E2E8F0;
 }
 
 QComboBox#provider_comboBox::drop-down,

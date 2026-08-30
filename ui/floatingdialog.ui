@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>floating_dialog</class>
+ <widget class="QDialog" name="floating_dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>420</width>
+    <height>340</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>360</width>
+    <height>280</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>560</width>
+    <height>520</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>翻译结果</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog#floating_dialog {
+    color: #0F172A;
+    background-color: #F8FAFC;
+}
+
+QLabel#translation_direction_label,
+QLabel#source_text_label,
+QLabel#translation_text_label {
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+QWidget#translation_direction_widget {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+}
+
+QLabel#source_language_label {
+    min-height: 26px;
+    max-height: 26px;
+    padding: 0 10px;
+    color: #475569;
+    background-color: #F1F5F9;
+    border: none;
+    border-radius: 6px;
+}
+
+QLabel#translation_direction_icon_label {
+    background-color: transparent;
+    border: none;
+}
+
+QComboBox#target_language_combo_box {
+    min-height: 26px;
+    max-height: 26px;
+    padding: 0 28px 0 9px;
+    color: #0F172A;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 7px;
+}
+
+QComboBox#target_language_combo_box:hover {
+    border-color: #94A3B8;
+}
+
+QComboBox#target_language_combo_box:focus {
+    border-color: #2563EB;
+}
+
+QComboBox#target_language_combo_box::drop-down {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 26px;
+    background-color: transparent;
+    border: none;
+}
+
+QComboBox#target_language_combo_box::down-arrow {
+    image: url(:/settings/icons/chevron-down.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox#target_language_combo_box QAbstractItemView {
+    padding: 4px;
+    color: #0F172A;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    outline: none;
+    selection-color: #1E3A8A;
+    selection-background-color: #EFF6FF;
+}
+
+QComboBox#target_language_combo_box QAbstractItemView::item {
+    min-height: 26px;
+    padding: 0 8px;
+}
+
+QPlainTextEdit#source_text_edit {
+    padding: 9px 10px;
+    color: #0F172A;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    selection-color: #1E3A8A;
+    selection-background-color: #DBEAFE;
+}
+
+QWidget#translation_output_widget {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+}
+
+QPlainTextEdit#translation_text_edit {
+    padding: 9px 10px;
+    color: #0F172A;
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 7px;
+    selection-color: #1E3A8A;
+    selection-background-color: #DBEAFE;
+}
+
+QPlainTextEdit#source_text_edit:hover,
+QWidget#translation_output_widget:hover {
+    border-color: #94A3B8;
+}
+
+QPlainTextEdit#source_text_edit:focus {
+    border-color: #2563EB;
+}
+
+QPushButton#copy_translation_push_button {
+    min-width: 28px;
+    max-width: 28px;
+    min-height: 28px;
+    max-height: 28px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 6px;
+}
+
+QPushButton#copy_translation_push_button:hover {
+    background-color: #F1F5F9;
+}
+
+QPushButton#copy_translation_push_button:pressed {
+    background-color: #E2E8F0;
+}
+
+QPushButton#copy_translation_push_button:focus {
+    background-color: #EFF6FF;
+}
+
+QPlainTextEdit QScrollBar:vertical {
+    width: 8px;
+    margin: 4px 1px;
+    background-color: transparent;
+}
+
+QPlainTextEdit QScrollBar::handle:vertical {
+    min-height: 20px;
+    background-color: #CBD5E1;
+    border-radius: 3px;
+}
+
+QPlainTextEdit QScrollBar::handle:vertical:hover {
+    background-color: #94A3B8;
+}
+
+QPlainTextEdit QScrollBar::add-line:vertical,
+QPlainTextEdit QScrollBar::sub-line:vertical {
+    height: 0;
+    background-color: transparent;
+    border: none;
+}
+
+QPlainTextEdit QScrollBar::add-page:vertical,
+QPlainTextEdit QScrollBar::sub-page:vertical {
+    background-color: transparent;
+}</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="main_layout" stretch="0,1,1">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>16</number>
+   </property>
+   <property name="topMargin">
+    <number>14</number>
+   </property>
+   <property name="rightMargin">
+    <number>16</number>
+   </property>
+   <property name="bottomMargin">
+    <number>16</number>
+   </property>
+   <item>
+    <layout class="QVBoxLayout" name="translation_direction_layout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="translation_direction_label">
+       <property name="text">
+        <string>翻译方向</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="translation_direction_widget" native="true">
+       <layout class="QHBoxLayout" name="translation_direction_control_layout">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <property name="leftMargin">
+         <number>8</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>8</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="source_language_label">
+          <property name="text">
+           <string>自动检测</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="translation_direction_icon_label">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="accessibleName">
+           <string>翻译为</string>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../resource.qrc">:/mainwindow/icons/arrow-right-left.svg</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="target_language_combo_box">
+          <property name="accessibleName">
+           <string>目标语言</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>中文</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="source_section_layout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="source_text_label">
+       <property name="text">
+        <string>原文</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPlainTextEdit" name="source_text_edit">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>72</height>
+        </size>
+       </property>
+       <property name="accessibleName">
+        <string>原文</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Shape::NoFrame</enum>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>等待原文…</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="translation_section_layout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="translation_text_label">
+       <property name="text">
+        <string>译文</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="translation_output_widget" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>92</height>
+        </size>
+       </property>
+       <layout class="QVBoxLayout" name="translation_output_layout" stretch="1,0">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QPlainTextEdit" name="translation_text_edit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>56</height>
+           </size>
+          </property>
+          <property name="accessibleName">
+           <string>译文</string>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Shape::NoFrame</enum>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>等待译文…</string>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignmentFlag::AlignRight">
+         <widget class="QPushButton" name="copy_translation_push_button">
+          <property name="toolTip">
+           <string>复制译文</string>
+          </property>
+          <property name="accessibleName">
+           <string>复制译文</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../resource.qrc">
+            <normaloff>:/mainwindow/icons/copy.svg</normaloff>:/mainwindow/icons/copy.svg</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="default">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

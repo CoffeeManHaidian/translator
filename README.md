@@ -13,6 +13,9 @@ Trade Translator 是一个使用 Python 和 PySide6 构建的桌面翻译工具 
 - Windows 默认使用 `Ctrl+Shift+T` 获取所选文字。
 - macOS 默认使用 `Command+Shift+T` 获取所选文字。
 - 支持修改全局快捷键、测试模型连接和复制译文。
+- 快捷键取词后使用独立置顶悬浮窗显示流式译文。
+- 使用 SQLite 保存最近的翻译历史，并支持复制和再次使用。
+- 自动保存主窗口或悬浮窗最后选择的目标语言。
 
 ## 环境要求
 
@@ -78,6 +81,7 @@ app/                 应用入口和平台组装
 platforms/           Windows 与 macOS 原生能力
 providers/           模型 Provider 和流式网络处理
 settings/            设置及系统凭据存储
+history/             SQLite 翻译历史模型与仓储
 translation/         翻译请求管理
 ui/                  Qt 窗口和 UI 文件
 tests/               自动化测试

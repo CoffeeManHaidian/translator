@@ -39,8 +39,13 @@ def test_settings_dialog_uses_compact_controls(qtbot) -> None:
     assert dialog.ui.save_pushButton.height() <= 30
     assert dialog.ui.cancel_pushButton.height() <= 30
     assert dialog.ui.test_pushButton.height() <= 30
+    assert dialog.ui.hotkey_keySequenceEdit.height() <= 30
     assert "QComboBox#provider_comboBox::down-arrow" in dialog.styleSheet()
     assert "chevron-down.svg" in dialog.styleSheet()
+    assert (
+        "QKeySequenceEdit#hotkey_keySequenceEdit QLineEdit"
+        in dialog.styleSheet()
+    )
 
 
 def test_provider_and_model_are_icon_and_dropdown_controls(qtbot) -> None:
@@ -213,3 +218,4 @@ def test_settings_dialog_loads_and_returns_hotkey(qtbot) -> None:
         ctrl=True,
         alt=True,
     )
+    assert "Ctrl" in dialog.ui.hotkey_keySequenceEdit.toolTip()

@@ -1,3 +1,4 @@
+import sqlite3
 import sys
 from collections.abc import Callable
 from pathlib import Path
@@ -23,6 +24,7 @@ from platforms.models import (
     hotkey_to_text,
 )
 from platforms.text_capture import TextCapture
+from history.repository import HistoryRepository
 from providers.connection import ProviderConnectionTester
 from providers.registry import create_provider
 from settings.store import SettingsStore
@@ -130,11 +132,21 @@ def main(argv: list[str] | None = None) -> int:
     provider = create_provider(config)
     manager = TranslationManager(provider)
     connection_tester = ProviderConnectionTester()
+    try:
+        history_repository = HistoryRepository(
+            ":memory:" if smoke_test else None
+        )
+    except (OSError, sqlite3.Error):
+        # 历史数据库不可用时，核心翻译功能仍然可以运行。
+        history_repository = None
+    if history_repository is not None:
+        app.aboutToQuit.connect(history_repository.close)
 
     window = MainWindow(
         translation_manager=manager,
         settings_store=settings_store,
         connection_tester=connection_tester,
+        history_repository=history_repository,
         )
 
     window.provider_config_changed.connect(

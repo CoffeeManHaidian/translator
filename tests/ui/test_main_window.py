@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QDialog
 
 from providers.base import TranslationProvider
 from providers.config import ProviderConfig
+from history.repository import HistoryRepository
 from platforms.global_hotkey import GlobalHotkey
 from platforms.models import (
     DEFAULT_MACOS_HOTKEY,
@@ -53,6 +54,7 @@ class RecordingSettingsStore:
 
     def __init__(self, api_key: str = "") -> None:
         self.stored_api_key = api_key
+        self.default_target_language = "zh-CN"
 
     def save_api_key(self, api_key: str) -> None:
         api_key = api_key.strip()
@@ -83,16 +85,24 @@ class RecordingSettingsStore:
     def save_hotkey(self, hotkey: Hotkey) -> None:
         self.stored_hotkey = hotkey
 
+    def load_default_target_language(self) -> str:
+        return self.default_target_language
+
+    def save_default_target_language(self, language: str) -> None:
+        self.default_target_language = language
+
 
 def create_window(
     qtbot,
     settings_store: RecordingSettingsStore | None = None,
+    history_repository: HistoryRepository | None = None,
 ) -> tuple[MainWindow, RecordingTranslationProvider]:
     provider = RecordingTranslationProvider()
     manager = TranslationManager(provider)
     window = MainWindow(
         translation_manager=manager,
         settings_store=settings_store or RecordingSettingsStore(),
+        history_repository=history_repository,
     )
     qtbot.addWidget(window)
     return window, provider
@@ -143,6 +153,18 @@ def test_changing_target_language_retranslates(qtbot) -> None:
     qtbot.waitUntil(lambda: len(provider.requests) == 2, timeout=1500)
 
     assert provider.requests[-1].target_language == "en"
+
+
+def test_default_target_language_is_restored_and_updated(qtbot) -> None:
+    settings_store = RecordingSettingsStore()
+    settings_store.default_target_language = "en"
+    window, _provider = create_window(qtbot, settings_store)
+
+    assert window.current_target_language() == "en"
+
+    window.ui.translation_comboBox.setCurrentIndex(0)
+
+    assert settings_store.default_target_language == "zh-CN"
 
 
 def test_copy_button_copies_translation(qtbot, qapp) -> None:
@@ -231,6 +253,15 @@ def test_windows_global_hotkey_is_registered_and_updates_status(
 
     assert window.ui.origin_plainTextEdit.toPlainText() == "Captured source"
     assert provider.requests[-1].text == "Captured source"
+    assert window._floating_dialog.isVisible()
+    assert (
+        window._floating_dialog.ui.source_text_edit.toPlainText()
+        == "Captured source"
+    )
+    assert (
+        window._floating_dialog.ui.translation_text_edit.toPlainText()
+        == "模拟译文"
+    )
 
     changed_hotkey = Hotkey(key="Y", ctrl=True, alt=True)
     window.hotkey_change_requested.emit(changed_hotkey)
@@ -367,3 +398,20 @@ def test_cancelled_settings_are_not_saved(
     window.on_settings_clicked()
 
     assert settings_store.stored_api_key == "old-key"
+
+
+def test_successful_translation_is_added_to_history(qtbot) -> None:
+    repository = HistoryRepository(":memory:")
+    window, _provider = create_window(
+        qtbot,
+        history_repository=repository,
+    )
+
+    window.ui.origin_plainTextEdit.setPlainText("Hello history")
+    qtbot.waitUntil(lambda: len(repository.list_recent()) == 1, timeout=1500)
+
+    entry = repository.list_recent()[0]
+    assert entry.source_text == "Hello history"
+    assert entry.translated_text == "模拟译文"
+    assert window.ui.history_pushButton.isEnabled()
+    repository.close()

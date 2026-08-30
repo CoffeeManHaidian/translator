@@ -1,12 +1,18 @@
+import sqlite3
+
 from PySide6.QtCore import QTimer, Signal
-from PySide6.QtGui import QGuiApplication, QIcon
+from PySide6.QtGui import QCloseEvent, QGuiApplication, QIcon
 from PySide6.QtWidgets import QDialog, QMainWindow, QWidget
 
 from providers.config import ProviderConfig
 from providers.connection import ProviderConnectionTester
 from providers.registry import validate_provider_config
+from history.repository import HistoryRepository
 from translation.manager import TranslationManager
+from translation.models import TranslationRequest
 from ui.Ui_mainwindow import Ui_MainWindow
+from ui.floating_dialog import FloatingTranslationDialog
+from ui.history_dialog import HistoryDialog
 from ui.setting_dialog import SettingsDialog
 from settings.store import CredentialStoreError, SettingsStore
 
@@ -20,11 +26,14 @@ class MainWindow(QMainWindow):
         translation_manager: TranslationManager,
         settings_store: SettingsStore,
         connection_tester: ProviderConnectionTester | None = None,
+        history_repository: HistoryRepository | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
 
         self._settings_store = settings_store
+        self._history_repository = history_repository
+        self._current_provider_config = settings_store.load_active_config()
         self._connection_tester = connection_tester or ProviderConnectionTester(
             parent=self
         )
@@ -35,8 +44,23 @@ class MainWindow(QMainWindow):
         # combox 内置语言
         self.ui.translation_comboBox.setItemData(0, "zh-CN")
         self.ui.translation_comboBox.setItemData(1, "en")
+        default_target_language = (
+            self._settings_store.load_default_target_language()
+        )
+        default_target_index = self.ui.translation_comboBox.findData(
+            default_target_language
+        )
+        self.ui.translation_comboBox.setCurrentIndex(
+            max(default_target_index, 0)
+        )
 
         self._translation_manager = translation_manager
+        self._floating_dialog = FloatingTranslationDialog(
+            translation_manager,
+        )
+        self._floating_dialog.set_target_language(
+            self.current_target_language()
+        )
 
         self.ui.translation_plainTextEdit.setReadOnly(True)     # 设置翻译文本框只读
 
@@ -64,8 +88,8 @@ class MainWindow(QMainWindow):
         )
         # 目标语言改变自动翻译
         self.ui.translation_comboBox.currentIndexChanged.connect(
-            self.schedule_auto_translation
-            )
+            self.on_target_language_changed
+        )
 
         # 连接按钮槽
         self.ui.copy_pushButton.clicked.connect(
@@ -90,14 +114,31 @@ class MainWindow(QMainWindow):
         self._translation_manager.translation_cancelled.connect(
             self.on_translation_cancelled
             )
+        self._translation_manager.translation_succeeded.connect(
+            self.save_translation_history
+        )
+
+        self._floating_dialog.target_language_changed.connect(
+            self.on_floating_target_language_changed
+        )
 
         # 打开设置
         self.ui.settings_pushButton.clicked.connect(
             self.on_settings_clicked
             )
+        self.ui.history_pushButton.clicked.connect(
+            self.on_history_clicked
+        )
+        self.ui.history_pushButton.setEnabled(
+            self._history_repository is not None
+        )
 
         # 复制按钮不使能
         self.update_copy_button()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self._floating_dialog.close()
+        super().closeEvent(event)
 
     def copy_translation(self) -> None:
         """将文本复制到剪贴板"""
@@ -147,6 +188,37 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("正在翻译...")
         self.auto_translate_timer.start()
 
+    def current_target_language(self) -> str:
+        return str(self.ui.translation_comboBox.currentData())
+
+    def on_target_language_changed(self, _index: int) -> None:
+        target_language = self.current_target_language()
+        self._settings_store.save_default_target_language(target_language)
+        self._floating_dialog.set_target_language(target_language)
+        self.schedule_auto_translation()
+
+    def on_floating_target_language_changed(
+        self,
+        target_language: str,
+    ) -> None:
+        self._settings_store.save_default_target_language(target_language)
+        target_index = self.ui.translation_comboBox.findData(target_language)
+        if target_index >= 0:
+            blocked = self.ui.translation_comboBox.blockSignals(True)
+            self.ui.translation_comboBox.setCurrentIndex(target_index)
+            self.ui.translation_comboBox.blockSignals(blocked)
+
+        source_text = (
+            self._floating_dialog.ui.source_text_edit
+            .toPlainText()
+            .strip()
+        )
+        if source_text:
+            self._start_floating_translation(
+                source_text,
+                target_language,
+            )
+
     def start_auto_translation(self) -> None:
         """自动翻译"""
         source_text = (
@@ -158,9 +230,7 @@ class MainWindow(QMainWindow):
         if not source_text:
             return
 
-        target_language = (
-            self.ui.translation_comboBox.currentData()
-            )
+        target_language = self.current_target_language()
 
         self._translation_manager.translate(
             text=source_text,
@@ -210,26 +280,75 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("正在读取所选文字…")
 
     def on_selected_text_captured(self, text: str) -> None:
-        """显示取词结果，并跳过输入防抖立即开始翻译。"""
+        """在独立悬浮窗中显示取词结果并立即开始翻译。"""
         text = text.strip()
         if not text:
             self.on_text_capture_failed("未读取到所选文字")
             return
 
+        blocked = self.ui.origin_plainTextEdit.blockSignals(True)
         self.ui.origin_plainTextEdit.setPlainText(text)
+        self.ui.origin_plainTextEdit.blockSignals(blocked)
+        self.auto_translate_timer.stop()
+        self._start_floating_translation(
+            text,
+            self.current_target_language(),
+        )
+
+    def _start_floating_translation(
+        self,
+        text: str,
+        target_language: str,
+    ) -> None:
+        self._floating_dialog.begin_translation(text, target_language)
+        self._translation_manager.translate(
+            text=text,
+            target_language=target_language,
+        )
+
+    def on_text_capture_failed(self, message: str) -> None:
+        self._floating_dialog.show_capture_error(message)
+        self.statusBar().showMessage(message, 5000)
+
+    def save_translation_history(
+        self,
+        request: TranslationRequest,
+        translated_text: str,
+    ) -> None:
+        if self._history_repository is None:
+            return
+        try:
+            self._history_repository.add(
+                request,
+                translated_text,
+                provider=self._current_provider_config.provider_id,
+                model=self._current_provider_config.model,
+            )
+        except sqlite3.Error:
+            self.statusBar().showMessage("无法保存翻译历史", 3000)
+
+    def on_history_clicked(self) -> None:
+        if self._history_repository is None:
+            return
+        dialog = HistoryDialog(self._history_repository, self)
+        dialog.reuse_requested.connect(self.reuse_history_entry)
+        dialog.exec()
+
+    def reuse_history_entry(
+        self,
+        source_text: str,
+        target_language: str,
+    ) -> None:
+        target_index = self.ui.translation_comboBox.findData(target_language)
+        if target_index >= 0:
+            self.ui.translation_comboBox.setCurrentIndex(target_index)
+        self.ui.origin_plainTextEdit.setPlainText(source_text)
         self.auto_translate_timer.stop()
         self.showNormal()
         self.show()
         self.raise_()
         self.activateWindow()
         self.start_auto_translation()
-
-    def on_text_capture_failed(self, message: str) -> None:
-        self.showNormal()
-        self.show()
-        self.raise_()
-        self.activateWindow()
-        self.statusBar().showMessage(message, 5000)
 
     def on_settings_clicked(self) -> None:
         dialog = SettingsDialog(
@@ -252,6 +371,7 @@ class MainWindow(QMainWindow):
             return
 
         self.statusBar().showMessage("设置已保存并应用", 2000)
+        self._current_provider_config = config
         self.provider_config_changed.emit(config)
         # 同步注册结果会覆盖上面的通用成功提示，确保冲突信息可见。
         self.hotkey_change_requested.emit(hotkey)

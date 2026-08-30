@@ -58,6 +58,37 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_3.addWidget(self.translation_comboBox)
 
+        self.history_pushButton = QPushButton(self.centralwidget)
+        self.history_pushButton.setObjectName(u"history_pushButton")
+        self.history_pushButton.setStyleSheet(u"QPushButton#history_pushButton {\n"
+"    min-width: 36px;\n"
+"    max-width: 36px;\n"
+"    min-height: 36px;\n"
+"    max-height: 36px;\n"
+"\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"}\n"
+"\n"
+"QPushButton#history_pushButton:hover {\n"
+"    background-color: #F1F5F9;\n"
+"}\n"
+"\n"
+"QPushButton#history_pushButton:pressed {\n"
+"    background-color: #E2E8F0;\n"
+"}\n"
+"\n"
+"QPushButton#history_pushButton:focus {\n"
+"    border: 1px solid #2563EB;\n"
+"}")
+        icon = QIcon()
+        icon.addFile(u":/mainwindow/icons/rotate-ccw-clock.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.history_pushButton.setIcon(icon)
+        self.history_pushButton.setIconSize(QSize(18, 18))
+
+        self.horizontalLayout_3.addWidget(self.history_pushButton)
+
         self.settings_pushButton = QPushButton(self.centralwidget)
         self.settings_pushButton.setObjectName(u"settings_pushButton")
         self.settings_pushButton.setStyleSheet(u"QPushButton#settings_pushButton {\n"
@@ -86,9 +117,9 @@ class Ui_MainWindow(object):
 "QPushButton#settings_pushButton:disabled {\n"
 "    background-color: transparent;\n"
 "}")
-        icon = QIcon()
-        icon.addFile(u":/mainwindow/icons/settings.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.settings_pushButton.setIcon(icon)
+        icon1 = QIcon()
+        icon1.addFile(u":/mainwindow/icons/settings.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.settings_pushButton.setIcon(icon1)
         self.settings_pushButton.setIconSize(QSize(18, 18))
 
         self.horizontalLayout_3.addWidget(self.settings_pushButton)
@@ -188,9 +219,9 @@ class Ui_MainWindow(object):
         self.copy_pushButton = QPushButton(self.translation_widget)
         self.copy_pushButton.setObjectName(u"copy_pushButton")
         self.copy_pushButton.setEnabled(False)
-        icon1 = QIcon()
-        icon1.addFile(u":/mainwindow/icons/copy.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.copy_pushButton.setIcon(icon1)
+        icon2 = QIcon()
+        icon2.addFile(u":/mainwindow/icons/copy.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.copy_pushButton.setIcon(icon2)
         self.copy_pushButton.setIconSize(QSize(18, 18))
         self.copy_pushButton.setCheckable(True)
 
@@ -236,6 +267,13 @@ class Ui_MainWindow(object):
         self.translation_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"\u7b80\u4f53\u4e2d\u6587", None))
         self.translation_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"\u82f1\u8bed", None))
 
+#if QT_CONFIG(tooltip)
+        self.history_pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"\u7ffb\u8bd1\u5386\u53f2", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(accessibility)
+        self.history_pushButton.setAccessibleName(QCoreApplication.translate("MainWindow", u"\u6253\u5f00\u7ffb\u8bd1\u5386\u53f2", None))
+#endif // QT_CONFIG(accessibility)
+        self.history_pushButton.setText("")
 #if QT_CONFIG(tooltip)
         self.settings_pushButton.setToolTip(QCoreApplication.translate("MainWindow", u"\u8bbe\u7f6e", None))
 #endif // QT_CONFIG(tooltip)

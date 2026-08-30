@@ -18,6 +18,8 @@ SERVICE_NAME = "com.trade-translator.credentials"
 API_KEY_ACCOUNT = "deepseek-api-key"
 SELECTED_PROVIDER_KEY = "providers/selected"
 GLOBAL_HOTKEY_KEY = "shortcuts/global_hotkey"
+DEFAULT_TARGET_LANGUAGE_KEY = "translation/default_target_language"
+SUPPORTED_TARGET_LANGUAGES = {"zh-CN", "en"}
 
 
 class CredentialStoreError(RuntimeError):
@@ -159,3 +161,18 @@ class SettingsStore:
             return hotkey_from_text(stored_value)
         except ValueError:
             return default_hotkey
+
+    def save_default_target_language(self, language: str) -> None:
+        language = language.strip()
+        if language not in SUPPORTED_TARGET_LANGUAGES:
+            raise ValueError(f"不支持的目标语言：{language}")
+        self._settings.setValue(DEFAULT_TARGET_LANGUAGE_KEY, language)
+        self._settings.sync()
+
+    def load_default_target_language(self) -> str:
+        language = str(
+            self._settings.value(DEFAULT_TARGET_LANGUAGE_KEY, "zh-CN")
+        ).strip()
+        if language not in SUPPORTED_TARGET_LANGUAGES:
+            return "zh-CN"
+        return language
