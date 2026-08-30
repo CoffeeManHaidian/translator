@@ -129,7 +129,12 @@ class WindowsGlobalHotkey(GlobalHotkey):
         )
 
         if not registered:
-            error_code = ctypes.get_last_error()
+            # ctypes.get_last_error() 是 Windows 专属 API，
+            # 其他平台（如 macOS 测试环境）回退到 errno。
+            if hasattr(ctypes, "get_last_error"):
+                error_code = ctypes.get_last_error()
+            else:
+                error_code = ctypes.get_errno()
             if previous_hotkey is not None:
                 restored = bool(
                     self._user32.RegisterHotKey(

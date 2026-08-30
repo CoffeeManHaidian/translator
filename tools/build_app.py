@@ -135,7 +135,7 @@ def create_release_archive(application_path: Path) -> Path:
     archive_base.parent.mkdir(parents=True, exist_ok=True)
 
     if sys.platform == "darwin":
-        archive_path = archive_base.with_suffix(".zip")
+        archive_path = Path(str(archive_base) + ".zip")
         archive_path.unlink(missing_ok=True)
         subprocess.run(
             [
