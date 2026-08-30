@@ -66,11 +66,13 @@ python -m pip install -r requirements-build.txt
 python tools/build_app.py
 ```
 
-脚本会依次生成平台图标、构建应用、运行打包后冒烟测试，并将发布压缩包写入 `release/`：
+脚本会依次校验各处版本号、运行完整测试、生成平台图标、构建应用并运行打包后冒烟测试。只有全部通过后，才会将发布压缩包和对应的 `.sha256` 校验文件写入 `release/`：
 
 - Windows：`TradeTranslator-0.1.0-windows-x86_64.zip`
 - Apple Silicon：`TradeTranslator-0.1.0-macos-arm64.zip`
 - Intel Mac：`TradeTranslator-0.1.0-macos-x86_64.zip`
+
+正式发布时应同时上传 ZIP 和同名的 `.zip.sha256` 文件。构建脚本只生成本地产物，不会自动创建 Git 标签或上传 GitHub Release。
 
 当前发布包没有代码签名。Windows 可能显示 SmartScreen 提示；macOS 给其他设备分发时，需要后续加入 Apple Developer ID 签名和公证。
 

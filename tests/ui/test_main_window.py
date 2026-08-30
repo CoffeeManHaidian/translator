@@ -333,6 +333,47 @@ def test_global_hotkey_registration_failure_is_shown(qtbot) -> None:
     assert window.statusBar().currentMessage() == "快捷键已被其他程序占用"
 
 
+def test_conflicting_hotkey_is_not_saved(qtbot) -> None:
+    from app.main import configure_global_hotkey
+
+    class ConflictAwareGlobalHotkey(GlobalHotkey):
+        def __init__(self, parent=None) -> None:
+            super().__init__(parent)
+            self.registered_hotkey: Hotkey | None = None
+
+        def register_hotkey(self, hotkey: Hotkey) -> bool:
+            if hotkey.key == "Y":
+                self.registration_failed.emit("快捷键已被其他程序占用")
+                return False
+            self.registered_hotkey = hotkey
+            return True
+
+        def unregister_hotkey(self) -> None:
+            self.registered_hotkey = None
+
+    class IdleTextCapture(TextCapture):
+        def capture_selected_text(self) -> None:
+            pass
+
+    settings_store = RecordingSettingsStore()
+    window, _provider = create_window(qtbot, settings_store)
+    service = ConflictAwareGlobalHotkey()
+    configure_global_hotkey(
+        window,
+        settings_store=settings_store,
+        factory=lambda parent: service,
+        text_capture_factory=lambda parent: IdleTextCapture(parent),
+    )
+
+    window.hotkey_change_requested.emit(
+        Hotkey(key="Y", ctrl=True, alt=True)
+    )
+
+    assert settings_store.load_hotkey() == DEFAULT_WINDOWS_HOTKEY
+    assert service.registered_hotkey == DEFAULT_WINDOWS_HOTKEY
+    assert window.statusBar().currentMessage() == "快捷键已被其他程序占用"
+
+
 def test_macos_platform_uses_command_shortcut(qtbot, monkeypatch) -> None:
     import app.main as main_module
 
