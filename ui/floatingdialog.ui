@@ -281,7 +281,12 @@ QPlainTextEdit QScrollBar::sub-page:vertical {
           </property>
           <item>
            <property name="text">
-            <string>中文</string>
+            <string>简体中文</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>英文</string>
            </property>
           </item>
          </widget>
@@ -318,7 +323,7 @@ QPlainTextEdit QScrollBar::sub-page:vertical {
         <enum>QFrame::Shape::NoFrame</enum>
        </property>
        <property name="readOnly">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="placeholderText">
         <string>等待原文…</string>

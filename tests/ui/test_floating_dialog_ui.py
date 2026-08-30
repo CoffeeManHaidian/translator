@@ -34,12 +34,14 @@ def test_floating_dialog_uses_semantic_component_names(qtbot) -> None:
     )
 
 
-def test_floating_dialog_uses_read_only_multiline_text_views(qtbot) -> None:
+def test_floating_dialog_uses_editable_source_and_read_only_translation(
+    qtbot,
+) -> None:
     _dialog, ui = create_floating_dialog(qtbot)
 
     assert isinstance(ui.source_text_edit, QPlainTextEdit)
     assert isinstance(ui.translation_text_edit, QPlainTextEdit)
-    assert ui.source_text_edit.isReadOnly()
+    assert not ui.source_text_edit.isReadOnly()
     assert ui.translation_text_edit.isReadOnly()
     assert ui.translation_direction_label.text() == "翻译方向"
     assert ui.source_text_label.text() == "原文"
@@ -57,6 +59,8 @@ def test_floating_dialog_uses_compact_direction_control(qtbot) -> None:
         dialog.styleSheet()
     )
     assert not ui.translation_direction_icon_label.pixmap().isNull()
+    assert ui.target_language_combo_box.itemText(0) == "简体中文"
+    assert ui.target_language_combo_box.itemText(1) == "英文"
 
 
 def test_translation_output_has_borderless_copy_button(qtbot) -> None:

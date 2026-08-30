@@ -28,8 +28,8 @@ class FloatingTranslationDialog(QDialog):
         self._awaiting_request = False
 
         self.ui.target_language_combo_box.clear()
-        self.ui.target_language_combo_box.addItem("中文", "zh-CN")
-        self.ui.target_language_combo_box.addItem("英语", "en")
+        self.ui.target_language_combo_box.addItem("简体中文", "zh-CN")
+        self.ui.target_language_combo_box.addItem("英文", "en")
         self.ui.copy_translation_push_button.setEnabled(False)
 
         self.ui.copy_translation_push_button.clicked.connect(

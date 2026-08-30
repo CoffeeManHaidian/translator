@@ -232,6 +232,7 @@ class Ui_floating_dialog(object):
 
         self.target_language_combo_box = QComboBox(self.translation_direction_widget)
         self.target_language_combo_box.addItem("")
+        self.target_language_combo_box.addItem("")
         self.target_language_combo_box.setObjectName(u"target_language_combo_box")
 
         self.translation_direction_control_layout.addWidget(self.target_language_combo_box)
@@ -254,7 +255,7 @@ class Ui_floating_dialog(object):
         self.source_text_edit.setObjectName(u"source_text_edit")
         self.source_text_edit.setMinimumSize(QSize(0, 72))
         self.source_text_edit.setFrameShape(QFrame.Shape.NoFrame)
-        self.source_text_edit.setReadOnly(True)
+        self.source_text_edit.setReadOnly(False)
 
         self.source_section_layout.addWidget(self.source_text_edit)
 
@@ -319,7 +320,8 @@ class Ui_floating_dialog(object):
 #if QT_CONFIG(accessibility)
         self.translation_direction_icon_label.setAccessibleName(QCoreApplication.translate("floating_dialog", u"\u7ffb\u8bd1\u4e3a", None))
 #endif // QT_CONFIG(accessibility)
-        self.target_language_combo_box.setItemText(0, QCoreApplication.translate("floating_dialog", u"\u4e2d\u6587", None))
+        self.target_language_combo_box.setItemText(0, QCoreApplication.translate("floating_dialog", u"\u7b80\u4f53\u4e2d\u6587", None))
+        self.target_language_combo_box.setItemText(1, QCoreApplication.translate("floating_dialog", u"\u82f1\u6587", None))
 
 #if QT_CONFIG(accessibility)
         self.target_language_combo_box.setAccessibleName(QCoreApplication.translate("floating_dialog", u"\u76ee\u6807\u8bed\u8a00", None))
