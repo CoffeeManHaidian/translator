@@ -124,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     app.setApplicationName("Trade Translator")
     app.setApplicationDisplayName("Trade Translator")
     app.setApplicationVersion(__version__)
-    app.setWindowIcon(QIcon(":/app/icons/app.svg"))
+    app.setWindowIcon(QIcon(":/app/icons/languages.svg"))
 
     settings_store = SettingsStore()
 

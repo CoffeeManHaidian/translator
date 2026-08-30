@@ -28,7 +28,7 @@ def render_icon(source: Path, target: Path, size: int) -> None:
 
 def main() -> int:
     application = QGuiApplication([])
-    source = ROOT / "icons" / "app.svg"
+    source = ROOT / "icons" / "languages.svg"
     render_icon(source, ROOT / "icons" / "app.ico", 256)
     render_icon(source, ROOT / "icons" / "app.icns", 1024)
     application.quit()

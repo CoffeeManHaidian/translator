@@ -1,6 +1,6 @@
 <RCC>
   <qresource prefix="app">
-    <file>icons/app.svg</file>
+    <file>icons/languages.svg</file>
   </qresource>
   <qresource prefix="mainwindow">
     <file>icons/arrow-right-left.svg</file>
