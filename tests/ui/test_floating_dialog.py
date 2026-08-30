@@ -1,3 +1,5 @@
+from PySide6.QtCore import Qt
+
 from providers.base import TranslationProvider
 from translation.manager import TranslationManager
 from translation.models import TranslationRequest
@@ -49,6 +51,47 @@ def test_floating_dialog_target_language_change_is_emitted(qtbot) -> None:
     dialog.ui.target_language_combo_box.setCurrentIndex(1)
 
     assert languages == ["en"]
+
+
+def test_editing_source_requests_debounced_translation(qtbot) -> None:
+    provider = ControlledProvider()
+    manager = TranslationManager(provider)
+    dialog = FloatingTranslationDialog(manager)
+    qtbot.addWidget(dialog)
+    dialog.translation_requested.connect(manager.translate)
+
+    dialog.ui.source_text_edit.setPlainText("First draft")
+    qtbot.wait(400)
+    dialog.ui.source_text_edit.setPlainText("Final text")
+    qtbot.wait(500)
+
+    assert provider.request is None
+
+    qtbot.waitUntil(lambda: provider.request is not None, timeout=700)
+    assert provider.request is not None
+    assert provider.request.text == "Final text"
+    assert provider.request.target_language == "zh-CN"
+
+
+def test_macos_floating_dialog_remains_visible_when_app_is_inactive(
+    qtbot,
+    monkeypatch,
+) -> None:
+    import ui.floating_dialog as floating_dialog_module
+
+    monkeypatch.setattr(floating_dialog_module.sys, "platform", "darwin")
+    provider = ControlledProvider()
+    dialog = FloatingTranslationDialog(TranslationManager(provider))
+    qtbot.addWidget(dialog)
+
+    assert dialog.windowFlags() & Qt.WindowType.Tool
+    assert dialog.windowFlags() & Qt.WindowType.WindowStaysOnTopHint
+    assert dialog.testAttribute(
+        Qt.WidgetAttribute.WA_MacAlwaysShowToolWindow
+    )
+    assert dialog.testAttribute(
+        Qt.WidgetAttribute.WA_ShowWithoutActivating
+    )
 
 
 def test_floating_dialog_shows_capture_error_without_translation(qtbot) -> None:

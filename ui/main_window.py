@@ -121,6 +121,9 @@ class MainWindow(QMainWindow):
         self._floating_dialog.target_language_changed.connect(
             self.on_floating_target_language_changed
         )
+        self._floating_dialog.translation_requested.connect(
+            self.on_floating_translation_requested
+        )
 
         # 打开设置
         self.ui.settings_pushButton.clicked.connect(
@@ -214,10 +217,22 @@ class MainWindow(QMainWindow):
             .strip()
         )
         if source_text:
-            self._start_floating_translation(
-                source_text,
-                target_language,
-            )
+            self._floating_dialog.request_current_translation()
+
+    def on_floating_translation_requested(
+        self,
+        source_text: str,
+        target_language: str,
+    ) -> None:
+        """同步悬浮窗原文，并提交它发起的翻译请求。"""
+        blocked = self.ui.origin_plainTextEdit.blockSignals(True)
+        self.ui.origin_plainTextEdit.setPlainText(source_text)
+        self.ui.origin_plainTextEdit.blockSignals(blocked)
+        self.auto_translate_timer.stop()
+        self._translation_manager.translate(
+            text=source_text,
+            target_language=target_language,
+        )
 
     def start_auto_translation(self) -> None:
         """自动翻译"""
@@ -301,10 +316,7 @@ class MainWindow(QMainWindow):
         target_language: str,
     ) -> None:
         self._floating_dialog.begin_translation(text, target_language)
-        self._translation_manager.translate(
-            text=text,
-            target_language=target_language,
-        )
+        self.on_floating_translation_requested(text, target_language)
 
     def on_text_capture_failed(self, message: str) -> None:
         self._floating_dialog.show_capture_error(message)

@@ -167,6 +167,43 @@ def test_default_target_language_is_restored_and_updated(qtbot) -> None:
     assert settings_store.default_target_language == "zh-CN"
 
 
+def test_editing_floating_source_retranslates_latest_text(qtbot) -> None:
+    window, provider = create_window(qtbot)
+    window.on_selected_text_captured("Captured source")
+    initial_request_count = len(provider.requests)
+
+    window._floating_dialog.ui.source_text_edit.setPlainText("Edited")
+    qtbot.wait(400)
+    window._floating_dialog.ui.source_text_edit.setPlainText(
+        "Edited final source"
+    )
+    qtbot.wait(500)
+
+    assert len(provider.requests) == initial_request_count
+
+    qtbot.waitUntil(
+        lambda: len(provider.requests) == initial_request_count + 1,
+        timeout=700,
+    )
+    assert provider.requests[-1].text == "Edited final source"
+    assert (
+        window.ui.origin_plainTextEdit.toPlainText()
+        == "Edited final source"
+    )
+
+
+def test_changing_floating_target_retranslates_immediately(qtbot) -> None:
+    window, provider = create_window(qtbot)
+    window.on_selected_text_captured("Captured source")
+    initial_request_count = len(provider.requests)
+
+    window._floating_dialog.ui.target_language_combo_box.setCurrentIndex(1)
+
+    assert len(provider.requests) == initial_request_count + 1
+    assert provider.requests[-1].text == "Captured source"
+    assert provider.requests[-1].target_language == "en"
+
+
 def test_copy_button_copies_translation(qtbot, qapp) -> None:
     window, _provider = create_window(qtbot)
 
