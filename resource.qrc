@@ -19,4 +19,7 @@
     <file>icons/eye.svg</file>
     <file>icons/eye-off.svg</file>
   </qresource>
+  <qresource prefix="floating">
+    <file>icons/square-square.svg</file>
+  </qresource>
 </RCC>

@@ -30,6 +30,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setSpacing(8)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -236,6 +237,48 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
+        self.bottom_actions_layout = QHBoxLayout()
+        self.bottom_actions_layout.setSpacing(8)
+        self.bottom_actions_layout.setObjectName(u"bottom_actions_layout")
+        self.bottom_actions_spacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.bottom_actions_layout.addItem(self.bottom_actions_spacer)
+
+        self.open_floating_window_push_button = QPushButton(self.centralwidget)
+        self.open_floating_window_push_button.setObjectName(u"open_floating_window_push_button")
+        self.open_floating_window_push_button.setMinimumSize(QSize(0, 32))
+        self.open_floating_window_push_button.setMaximumSize(QSize(16777215, 32))
+        self.open_floating_window_push_button.setStyleSheet(u"QPushButton#open_floating_window_push_button {\n"
+"    padding: 0 10px;\n"
+"    color: #334155;\n"
+"    background-color: transparent;\n"
+"    border: 1px solid transparent;\n"
+"    border-radius: 8px;\n"
+"}\n"
+"\n"
+"QPushButton#open_floating_window_push_button:hover {\n"
+"    background-color: #F1F5F9;\n"
+"}\n"
+"\n"
+"QPushButton#open_floating_window_push_button:pressed {\n"
+"    background-color: #E2E8F0;\n"
+"}\n"
+"\n"
+"QPushButton#open_floating_window_push_button:focus {\n"
+"    border-color: #2563EB;\n"
+"}")
+        icon3 = QIcon()
+        icon3.addFile(u":/floating/icons/square-square.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.open_floating_window_push_button.setIcon(icon3)
+        self.open_floating_window_push_button.setIconSize(QSize(18, 18))
+        self.open_floating_window_push_button.setAutoDefault(False)
+
+        self.bottom_actions_layout.addWidget(self.open_floating_window_push_button)
+
+        self.bottom_actions_layout.setStretch(0, 1)
+
+        self.verticalLayout.addLayout(self.bottom_actions_layout)
+
         self.verticalLayout.setStretch(1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -288,4 +331,11 @@ class Ui_MainWindow(object):
         self.copy_pushButton.setAccessibleName(QCoreApplication.translate("MainWindow", u"\u590d\u5236\u8bd1\u6587", None))
 #endif // QT_CONFIG(accessibility)
         self.copy_pushButton.setText("")
+#if QT_CONFIG(tooltip)
+        self.open_floating_window_push_button.setToolTip(QCoreApplication.translate("MainWindow", u"\u6253\u5f00\u60ac\u6d6e\u7a97", None))
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(accessibility)
+        self.open_floating_window_push_button.setAccessibleName(QCoreApplication.translate("MainWindow", u"\u6253\u5f00\u60ac\u6d6e\u7a97", None))
+#endif // QT_CONFIG(accessibility)
+        self.open_floating_window_push_button.setText(QCoreApplication.translate("MainWindow", u"\u60ac\u6d6e\u7a97", None))
     # retranslateUi

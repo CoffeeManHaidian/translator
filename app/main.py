@@ -30,6 +30,7 @@ from providers.registry import create_provider
 from settings.store import SettingsStore
 from translation.manager import TranslationManager
 from ui.main_window import MainWindow
+from ui.system_tray import SystemTrayController
 
 
 def configure_global_hotkey(
@@ -139,15 +140,17 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, sqlite3.Error):
         # 历史数据库不可用时，核心翻译功能仍然可以运行。
         history_repository = None
-    if history_repository is not None:
-        app.aboutToQuit.connect(history_repository.close)
-
     window = MainWindow(
         translation_manager=manager,
         settings_store=settings_store,
         connection_tester=connection_tester,
         history_repository=history_repository,
         )
+
+    # 先停止翻译和延迟任务，再关闭历史数据库。
+    app.aboutToQuit.connect(window.prepare_to_quit)
+    if history_repository is not None:
+        app.aboutToQuit.connect(history_repository.close)
 
     window.provider_config_changed.connect(
         lambda new_config: manager.set_provider(
@@ -158,6 +161,7 @@ def main(argv: list[str] | None = None) -> int:
     # 冒烟测试只验证打包后的应用可以创建窗口并正常退出。
     if not smoke_test:
         configure_global_hotkey(window, settings_store)
+        window._system_tray = SystemTrayController(app, window)
 
     window.show()
     if smoke_test:

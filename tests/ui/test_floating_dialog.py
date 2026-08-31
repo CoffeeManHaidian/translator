@@ -53,6 +53,38 @@ def test_floating_dialog_target_language_change_is_emitted(qtbot) -> None:
     assert languages == ["en"]
 
 
+def test_manual_open_preserves_an_in_progress_translation(qtbot) -> None:
+    provider = ControlledProvider()
+    manager = TranslationManager(provider)
+    dialog = FloatingTranslationDialog(manager)
+    qtbot.addWidget(dialog)
+    dialog.begin_translation("Hello", "zh-CN")
+    request_id = manager.translate("Hello", "zh-CN")
+
+    dialog.open_window()
+    provider.chunk_received.emit(request_id, "你好")
+    provider.completed.emit(request_id)
+
+    assert dialog.ui.translation_text_edit.toPlainText() == "你好"
+    assert dialog.ui.copy_translation_push_button.isEnabled()
+
+
+def test_manual_open_restores_a_minimized_dialog(qtbot, monkeypatch) -> None:
+    provider = ControlledProvider()
+    dialog = FloatingTranslationDialog(TranslationManager(provider))
+    qtbot.addWidget(dialog)
+    activations = []
+    monkeypatch.setattr(dialog, "activateWindow", lambda: activations.append(True))
+    dialog.showMinimized()
+
+    dialog.open_window()
+
+    assert dialog.isVisible()
+    assert not dialog.isMinimized()
+    assert activations == [True]
+    assert provider.request is None
+
+
 def test_editing_source_requests_debounced_translation(qtbot) -> None:
     provider = ControlledProvider()
     manager = TranslationManager(provider)

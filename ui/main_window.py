@@ -32,6 +32,7 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
 
         self._settings_store = settings_store
+        self._prepared_to_quit = False
         self._history_repository = history_repository
         self._current_provider_config = settings_store.load_active_config()
         self._connection_tester = connection_tester or ProviderConnectionTester(
@@ -132,6 +133,9 @@ class MainWindow(QMainWindow):
         self.ui.history_pushButton.clicked.connect(
             self.on_history_clicked
         )
+        self.ui.open_floating_window_push_button.clicked.connect(
+            self.open_floating_window
+        )
         self.ui.history_pushButton.setEnabled(
             self._history_repository is not None
         )
@@ -142,6 +146,33 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event: QCloseEvent) -> None:
         self._floating_dialog.close()
         super().closeEvent(event)
+
+    def hide_to_background(self) -> None:
+        """只隐藏窗口，保留翻译内容、正在运行的请求和快捷键句柄。"""
+        self._floating_dialog.hide()
+        self.hide()
+
+    def open_floating_window(self) -> None:
+        """主窗口按钮和托盘共用入口，不重建窗口或重新发起翻译。"""
+        self._floating_dialog.open_window()
+
+    def show_main_window(self) -> None:
+        if self.isMinimized():
+            self.showNormal()
+        else:
+            self.show()
+        self.raise_()
+        self.activateWindow()
+
+    def prepare_to_quit(self) -> None:
+        """真正退出时停止延迟任务，避免数据库关闭后再收到翻译结果。"""
+        if self._prepared_to_quit:
+            return
+        self._prepared_to_quit = True
+        self.auto_translate_timer.stop()
+        self.copy_button_timer.stop()
+        self._floating_dialog.shutdown()
+        self._translation_manager.cancel_current()
 
     def copy_translation(self) -> None:
         """将文本复制到剪贴板"""

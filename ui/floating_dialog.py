@@ -74,6 +74,24 @@ class FloatingTranslationDialog(QDialog):
             self._on_translation_stopped
         )
 
+    def open_window(self) -> None:
+        """手动打开时激活窗口，保留已有内容和正在进行的翻译。"""
+        if not self.isVisible():
+            self._show_near_cursor()
+        if self.isMinimized():
+            self.showNormal()
+        self.raise_()
+        # 快捷键取词不抢焦点；显式点击入口时则允许立即编辑原文。
+        self.activateWindow()
+        self.ui.source_text_edit.setFocus(Qt.FocusReason.OtherFocusReason)
+
+    def shutdown(self) -> None:
+        """应用退出时不再提交待触发的悬浮窗翻译。"""
+        self._source_change_timer.stop()
+        self._request_id = None
+        self._awaiting_request = False
+        self.close()
+
     def begin_translation(self, text: str, target_language: str) -> None:
         self._source_change_timer.stop()
         self._request_id = None

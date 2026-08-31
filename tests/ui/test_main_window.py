@@ -114,6 +114,56 @@ def test_copy_button_is_disabled_without_translation(qtbot) -> None:
     assert not window.ui.copy_pushButton.isEnabled()
 
 
+def test_floating_window_button_is_below_text_panels(qtbot) -> None:
+    window, _provider = create_window(qtbot)
+    window.resize(680, 420)
+    window.show()
+    window.centralWidget().layout().activate()
+    button = window.ui.open_floating_window_push_button
+    translation_panel = window.ui.translation_widget
+
+    assert window.ui.horizontalLayout_3.count() == 5
+    assert window.ui.verticalLayout.itemAt(2).layout() is (
+        window.ui.bottom_actions_layout
+    )
+    assert button.parentWidget() is window.centralWidget()
+    assert button.geometry().right() == translation_panel.geometry().right()
+    assert button.y() - translation_panel.geometry().bottom() - 1 == 8
+    assert button.height() == 32
+    assert button.text() == "悬浮窗"
+    assert button.toolTip() == "打开悬浮窗"
+    assert button.accessibleName() == "打开悬浮窗"
+    assert not button.icon().pixmap(18, 18).isNull()
+
+
+def test_floating_window_button_opens_and_reuses_existing_dialog(qtbot) -> None:
+    window, provider = create_window(qtbot)
+    floating_dialog = window._floating_dialog
+    button = window.ui.open_floating_window_push_button
+
+    qtbot.mouseClick(button, Qt.MouseButton.LeftButton)
+
+    assert floating_dialog.isVisible()
+    assert provider.requests == []
+
+    window.on_selected_text_captured("Keep this translation")
+    request_count = len(provider.requests)
+    position = floating_dialog.pos()
+    qtbot.mouseClick(button, Qt.MouseButton.LeftButton)
+
+    assert floating_dialog.pos() == position
+    floating_dialog.close()
+    qtbot.mouseClick(button, Qt.MouseButton.LeftButton)
+
+    assert window._floating_dialog is floating_dialog
+    assert floating_dialog.isVisible()
+    assert floating_dialog.ui.source_text_edit.toPlainText() == (
+        "Keep this translation"
+    )
+    assert floating_dialog.ui.translation_text_edit.toPlainText() == "模拟译文"
+    assert len(provider.requests) == request_count
+
+
 def test_auto_translation_submits_complete_text(qtbot) -> None:
     settings_store = RecordingSettingsStore()
     window, provider = create_window(qtbot, settings_store)
