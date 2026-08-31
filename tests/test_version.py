@@ -7,8 +7,8 @@ from app.version import __version__
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_mvp_version_is_0_1_0() -> None:
-    assert __version__ == "0.1.0"
+def test_release_version_is_0_1_1() -> None:
+    assert __version__ == "0.1.1"
 
 
 def test_packaging_versions_match_runtime_version() -> None:
@@ -26,3 +26,6 @@ def test_packaging_versions_match_runtime_version() -> None:
     assert project_version.group(1) == __version__
     assert f"FileVersion', '{__version__}'" in windows_version
     assert f"ProductVersion', '{__version__}'" in windows_version
+    numeric_version = tuple(int(part) for part in __version__.split(".")) + (0,)
+    assert f"filevers={numeric_version}" in windows_version
+    assert f"prodvers={numeric_version}" in windows_version

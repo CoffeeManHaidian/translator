@@ -2,7 +2,7 @@
 
 Trade Translator 是一个使用 Python 和 PySide6 构建的桌面翻译工具 MVP，支持自动翻译、流式输出、自定义 OpenAI 兼容模型，以及 Windows/macOS 跨应用快捷键取词。
 
-当前 MVP 版本：`0.1.0`
+当前 MVP 版本：`0.1.1`
 
 ## 当前 MVP
 
@@ -80,9 +80,9 @@ python tools/build_app.py
 
 脚本会依次校验各处版本号、运行完整测试、生成平台图标、构建应用并运行打包后冒烟测试。只有全部通过后，才会将发布压缩包和对应的 `.sha256` 校验文件写入 `release/`：
 
-- Windows：`TradeTranslator-0.1.0-windows-x86_64.zip`
-- Apple Silicon：`TradeTranslator-0.1.0-macos-arm64.zip`
-- Intel Mac：`TradeTranslator-0.1.0-macos-x86_64.zip`
+- Windows：`TradeTranslator-0.1.1-windows-x86_64.zip`
+- Apple Silicon：`TradeTranslator-0.1.1-macos-arm64.zip`
+- Intel Mac：`TradeTranslator-0.1.1-macos-x86_64.zip`
 
 正式发布时应同时上传 ZIP 和同名的 `.zip.sha256` 文件。构建脚本只生成本地产物，不会自动创建 Git 标签或上传 GitHub Release。
 

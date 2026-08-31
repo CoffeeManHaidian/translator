@@ -1,14 +1,15 @@
 from pathlib import Path
 
+from app.version import __version__
 from tools import build_app
 
 
 def test_current_release_metadata_is_consistent() -> None:
-    assert build_app.validate_release_metadata() == "0.1.0"
+    assert build_app.validate_release_metadata() == __version__
 
 
 def test_create_checksum_matches_archive(tmp_path: Path) -> None:
-    archive = tmp_path / "TradeTranslator-0.1.0-test.zip"
+    archive = tmp_path / f"TradeTranslator-{__version__}-test.zip"
     archive.write_bytes(b"release artifact")
 
     checksum_path, checksum = build_app.create_checksum(archive)

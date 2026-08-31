@@ -6,7 +6,7 @@ from PyInstaller.utils.hooks import collect_submodules
 
 
 ROOT = Path(SPECPATH).resolve().parent
-VERSION = os.environ.get("TRADE_TRANSLATOR_VERSION", "0.1.0")
+VERSION = os.environ.get("TRADE_TRANSLATOR_VERSION", "0.1.1")
 IS_WINDOWS = sys.platform == "win32"
 IS_MACOS = sys.platform == "darwin"
 CONSOLE = os.environ.get("TRADE_TRANSLATOR_CONSOLE") == "1"
